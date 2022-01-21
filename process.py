@@ -53,18 +53,21 @@ def createFile(i):
 #function to move files to queue folder
 def addFiletoQueue():
     allprocessing = os.listdir("{0}/processing".format(curdir))
-    print("Moving files [{0} - {1}] to queue folder...".format(allprocessing[0],allprocessing[-1]))
-    for f in allprocessing:
-        shutil.move("{0}/processing/{1}".format(curdir,f), "{0}/queue/{1}".format(curdir,f))
+    queuedfiles = os.listdir("{0}/queue".format(curdir))
+    if len(queuedfiles) <= 0:
+        print("Moving files [{0} - {1}] to queue folder...".format(allprocessing[0],allprocessing[-1]))
+        for f in allprocessing:
+            shutil.move("{0}/processing/{1}".format(curdir,f), "{0}/queue/{1}".format(curdir,f))
 
-    print("Files moved to queue folder !!\n")
+        print("Files moved to queue folder !!\n")
+    else:
+        print("Queue folder not empty !! Cannot move files from processing to queue")
     processFile()
     th.Timer(5, addFiletoQueue).start()
 
 #function to update and move files to processed folder
 def processFile():
     allqueue = os.listdir("{0}/queue".format(curdir))
-    print(allqueue)
     print("Updating file statuses [{0} - {1}] !!".format(allqueue[0],allqueue[-1]))
     sql = "UPDATE filestatus SET status = '1' WHERE filename = %s"
     values=[]
